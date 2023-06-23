@@ -2,6 +2,8 @@ package com.projet.filrouge.Contrôleurs;
 
 import com.projet.filrouge.DAO.PersonneDAOImpl;
 import com.projet.filrouge.Modèles.Personne;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,11 +31,14 @@ public class PersonneController {
         }
     }
     @GetMapping("/findemail")
-    public void testFindByEmail(@RequestParam String emailMNS) {
-        Optional<Personne> personneOptionnel = personneDAO.findByEmail(emailMNS);
-        personneOptionnel.ifPresent(personne -> System.out.println("Personne trouvée : " + personne.getNom() + " " + personne.getPrénom()));
-        if (personneOptionnel.isEmpty()) {
-            System.out.println("Aucune personne trouvée avec l'email spécifié.");
+    public ResponseEntity<Personne> findemail(@RequestParam String emailMNS) {
+        Optional<Personne> personneOpt = personneDAO.findByEmail(emailMNS);
+
+        if (personneOpt.isPresent()) {
+            return new ResponseEntity<>(personneOpt.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 }

@@ -36,6 +36,9 @@ public class Infos {
     private String ancien_stagiaire_nom;
     private String ancien_stagiaire_formation;
 
+    public Infos() {
+    }
+
     public Infos(String diplome, String formation_type, String amenagements, String amenagementsInfo, String tiers_temps, String langages, String projets_url, String formation_interesse, String choix_mns, String choix_formation, String projet_pro, String secteur_stage, String qualites, String defauts, String passions, String niveau_anglais, String autre_langue, String autre_langueInfo, String permis_b, String vehicule, String mobilite, String expatriation_stage, String connu_mns, boolean acceptation_politique, String ancien_stagiaire_prenom, String ancien_stagiaire_nom, String ancien_stagiaire_formation) {
         this.diplome = diplome;
         this.formation_type = formation_type;

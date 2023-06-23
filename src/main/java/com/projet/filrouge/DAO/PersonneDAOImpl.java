@@ -16,7 +16,7 @@ public class PersonneDAOImpl implements PersonneDAO {
     public Connection getConnection() throws SQLException {
        return DriverManager.getConnection("jdbc:mysql://localhost:3306/adminmns", "root","");
     }
-
+    @Override
     public int getIdByUsername(String username) {
         String query = "SELECT id_p FROM Personne WHERE emailMNS_p = ?";
         try (Connection connection = getConnection();
@@ -33,7 +33,7 @@ public class PersonneDAOImpl implements PersonneDAO {
     }
 
 
-
+    @Override
     public int getLoggedInUserId() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -62,7 +62,7 @@ public class PersonneDAOImpl implements PersonneDAO {
         }
         return null;
     }
-
+    @Override
     public boolean checkByNomAndPrenom(String nom, String prenom) {
         String query = "SELECT emailMNS_p FROM Personne WHERE nom_p = ? AND prenom_p = ?";
         try (Connection connection = getConnection();
@@ -78,7 +78,7 @@ public class PersonneDAOImpl implements PersonneDAO {
         }
         return true;
     }
-
+    @Override
     public Personne mapResultSetToPersonne(ResultSet resultSet) throws SQLException {
         Personne personne = new Personne();
         personne.setId(resultSet.getInt("id_p"));
@@ -142,8 +142,8 @@ public class PersonneDAOImpl implements PersonneDAO {
             e.printStackTrace();
         }
     }
-
-    private void insererRole(int personneId, List<Rôle> roles) {
+    @Override
+    public void insererRole(int personneId, List<Rôle> roles) {
         String query = "INSERT INTO personnerole (id_personne, id_role) VALUES (?, ?)";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -156,7 +156,8 @@ public class PersonneDAOImpl implements PersonneDAO {
             e.printStackTrace();
         }
     }
-    private List<Rôle> getRoleDetails(int personneId) {
+    @Override
+    public List<Rôle> getRoleDetails(int personneId) {
         String query = "SELECT role.* FROM role JOIN personnerole ON role.id_r = personnerole.id_role WHERE personnerole.id_personne = ?";
         List<Rôle> rôles = new ArrayList<>();
         try (Connection connection = getConnection();
@@ -175,5 +176,4 @@ public class PersonneDAOImpl implements PersonneDAO {
         return rôles;
     }
 
-
-}
+    }
