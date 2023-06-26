@@ -1,7 +1,5 @@
 package com.projet.filrouge.Modèles;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.projet.filrouge.Services.MultipartFileSerializer;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
@@ -41,17 +39,11 @@ public class InscriptionData implements Serializable {
     private String mobilite;
     private String expatriation_stage;
     private String connu_mns;
-    @JsonSerialize(using = MultipartFileSerializer.class)
     private MultipartFile photo;
-    @JsonSerialize(using = MultipartFileSerializer.class)
     private MultipartFile copie_id;
-    @JsonSerialize(using = MultipartFileSerializer.class)
     private MultipartFile cv;
-    @JsonSerialize(using = MultipartFileSerializer.class)
     private MultipartFile copie_diplome;
-    @JsonSerialize(using = MultipartFileSerializer.class)
     private MultipartFile bulletins_notes;
-    @JsonSerialize(using = MultipartFileSerializer.class)
     private MultipartFile lettre_motivation;
     private boolean acceptation_politique;
     private String ancien_stagiaire_prenom;

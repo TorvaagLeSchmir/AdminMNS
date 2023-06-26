@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 @RestController
 public class JustificatifController {
-
-    @Value("${app.justificatifs-dir}")
-    private String justificatifsDir;
 
     private final ResourceLoader resourceLoader;
 
@@ -23,14 +23,31 @@ public class JustificatifController {
         this.resourceLoader = resourceLoader;
     }
 
+
+    @Value("${app.justificatifs-dir}")
+    private String justificatifsDir;
+
+    @Value("${app.doc-dir}")
+    private String docDir;
+
     @GetMapping("/admin/justificatifs/{filename:.+}")
     public ResponseEntity<byte[]> serveJustificatif(@PathVariable String filename) {
+        return serveFileFromDirectory(justificatifsDir, filename);
+    }
+
+    @GetMapping("/admin/documents/{filename:.+}")
+    public ResponseEntity<byte[]> servePhoto(@PathVariable String filename) {
+        return serveFileFromDirectory(docDir, filename);
+    }
+
+    private ResponseEntity<byte[]> serveFileFromDirectory(String directory, String filename) {
         try {
-            Resource fileResource = resourceLoader.getResource("file:" + justificatifsDir + "/" + filename);
+            Resource fileResource = resourceLoader.getResource("file:" + directory + "/" + filename);
             if (fileResource.exists() || fileResource.isReadable()) {
+                String mimeType = Files.probeContentType(Paths.get(fileResource.getURI()));
                 HttpHeaders headers = new HttpHeaders();
                 headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileResource.getFilename() + "\"");
-                headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
+                headers.add(HttpHeaders.CONTENT_TYPE, mimeType != null ? mimeType : "application/octet-stream");
                 byte[] fileContent = StreamUtils.copyToByteArray(fileResource.getInputStream());
                 return new ResponseEntity<>(fileContent, headers, HttpStatus.OK);
             } else {
@@ -40,4 +57,5 @@ public class JustificatifController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }
