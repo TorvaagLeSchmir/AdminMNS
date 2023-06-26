@@ -2,8 +2,10 @@ package com.projet.filrouge.DAO;
 
 import com.projet.filrouge.Modèles.Personne;
 import com.projet.filrouge.Modèles.Rôle;
+import com.projet.filrouge.Services.PasswordGenerator;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.*;
@@ -13,6 +15,11 @@ import java.util.Optional;
 
 @Repository
 public class PersonneDAOImpl implements PersonneDAO {
+
+    private PasswordGenerator passwordGenerator;
+
+
+
     public Connection getConnection() throws SQLException {
        return DriverManager.getConnection("jdbc:mysql://localhost:3306/adminmns", "root","");
     }
@@ -175,5 +182,53 @@ public class PersonneDAOImpl implements PersonneDAO {
         }
         return rôles;
     }
+    public void accepterCandidature(int idPersonne) throws SQLException {
+        String updateQuery = "UPDATE PersonneRole SET id_role = 2 WHERE id_personne = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(updateQuery)) {
+            statement.setInt(1, idPersonne);
+            statement.executeUpdate();
 
+
+            String emailQuery = "SELECT nom_p, prenom_p FROM Personne WHERE id_p = ?";
+            PreparedStatement statement1 = connection.prepareStatement(emailQuery);
+            statement1.setInt(1, idPersonne);
+            ResultSet resultSet = statement1.executeQuery();
+
+            if (resultSet.next()) {
+                String nom = resultSet.getString("nom_p");
+                String prenom = resultSet.getString("prenom_p");
+                String email = prenom.toLowerCase() + "." + nom.toLowerCase() + "@stagiairesmns.fr";
+
+                String setEmailQuery = "UPDATE Personne SET emailMNS_p = ? WHERE id_p = ?";
+                PreparedStatement statement2 = connection.prepareStatement(setEmailQuery);
+                    statement2.setString(1, email);
+                    statement2.setInt(2, idPersonne);
+                    statement2.executeUpdate();
+            }
+            String password = passwordGenerator.generatePassword(8);
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String hashedPassword = passwordEncoder.encode(password);
+            String updatePasswordQuery = "UPDATE Personne SET mdp_p = ? WHERE id_p = ?";
+            try (PreparedStatement statement3 = connection.prepareStatement(updatePasswordQuery)) {
+                statement3.setString(1, hashedPassword);
+                statement3.setInt(2, idPersonne);
+                statement3.executeUpdate();
+                System.out.println(password);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+    public void refuserCandidature(int idPersonne){
+        String deleteQuery = "DELETE FROM Personne WHERE id_p = ? ";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(deleteQuery)) {
+            statement.setInt(1, idPersonne);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     }

@@ -38,6 +38,7 @@ public class InscriptionDataDAOImpl implements InscriptionDataDAO {
                     Personne personne = new Personne();
                     Infos infos = new Infos();
 
+                    personne.setId(resultSet.getInt("id_p"));
                     personne.setTel(resultSet.getString("tel_p"));
                     personne.setDateNaissance(resultSet.getDate("dateNaissance_p"));
                     personne.setNom(resultSet.getString("nom_p"));
