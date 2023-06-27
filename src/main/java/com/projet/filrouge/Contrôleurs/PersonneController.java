@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,12 +23,22 @@ public class PersonneController {
     }
 
     @GetMapping("/admin/finduser")
-    public void testFindByNomAndPrenom(@RequestParam String nom, @RequestParam String prénom) {
-        Personne personne = personneDAO.findByNomAndPrenom(nom, prénom);
-        if (personne != null) {
-            System.out.println("Personne trouvée : " + personne.getNom() + " " + personne.getPrénom());
+    public ResponseEntity<Personne> testFindByNomAndPrenom(@RequestParam String nom, @RequestParam String prenom) {
+        Optional<Personne> personneOpt = Optional.ofNullable(personneDAO.findByNomAndPrenom(nom, prenom));
+        if (personneOpt.isPresent()) {
+            return new ResponseEntity<>(personneOpt.get(), HttpStatus.OK);
         } else {
-            System.out.println("Aucune personne trouvée avec le nom et prénom spécifiés.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/admin/stagiaires")
+    public ResponseEntity<List<Personne>> getStagiaires() {
+        List<Personne> stagiaires = personneDAO.findAllStagiaires();
+        if (!stagiaires.isEmpty()) {
+            return new ResponseEntity<>(stagiaires, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
     @GetMapping("/findemail")

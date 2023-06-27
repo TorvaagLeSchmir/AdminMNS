@@ -83,4 +83,12 @@ public class AbsenceController {
         boolean isJustified = (boolean) payload.get("isJustified");
         absenceDAO.updateJustification(id, isJustified);
         }
+    @GetMapping("/admin/stagiaires/{id}/absences")
+    public List<Absence> getAbsencesParStagiaire(@PathVariable int id) {
+        return absenceDAO.getAbsencesParPersonne(id);
+    }
+    @GetMapping("/admin/stagiaires/{id}/retards")
+    public List<Absence> getRetardsParStagiaire(@PathVariable int id) {
+        return absenceDAO.getRetardsParPersonne(id);
+    }
     }

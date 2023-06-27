@@ -55,11 +55,12 @@ public class PersonneDAOImpl implements PersonneDAO {
 
     @Override
     public Personne findByNomAndPrenom(String nom, String prenom) {
-        String query = "SELECT personne.*, personnerole.id_role FROM Personne LEFT JOIN personnerole ON personne.id_p = personnerole.id_personne WHERE nom_p = ? AND prenom_p = ?";
+        String query = "SELECT Personne.* FROM Personne LEFT JOIN Personnerole ON Personne.id_p = Personnerole.id_personne WHERE nom_p = ? AND prenom_p = ? AND id_role = ?";
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, nom);
             statement.setString(2, prenom);
+            statement.setInt(3, 2);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return mapResultSetToPersonne(resultSet);
@@ -231,4 +232,22 @@ public class PersonneDAOImpl implements PersonneDAO {
             e.printStackTrace();
         }
     }
+
+    public List<Personne> findAllStagiaires(){
+        String query = "SELECT Personne.* FROM Personne LEFT JOIN Personnerole ON Personne.id_p = Personnerole.id_personne WHERE id_role = ?";
+        List<Personne> stagiaires = new ArrayList<>();
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, 2);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                stagiaires.add(mapResultSetToPersonne(resultSet));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return stagiaires;
     }
+
+    }
+

@@ -49,6 +49,7 @@ public class AbsenceDAOimpl implements AbsenceDAO {
         absence.setJustificatifTxt(resultSet.getString("justificatiftxt_m"));
         absence.setRetard(resultSet.getBoolean("isRetard"));
         absence.setChecked(resultSet.getBoolean("isChecked"));
+        absence.setJustified(resultSet.getBoolean("isJustified"));
 
         return absence;
     }
@@ -205,6 +206,38 @@ public class AbsenceDAOimpl implements AbsenceDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    public List<Absence> getAbsencesParPersonne(int idPersonne) {
+        List<Absence> absences = new ArrayList<>();
+        String query = "SELECT a.* FROM Absence a JOIN PersonneAbsence pa ON a.id_m = pa.id_absence WHERE pa.id_personne = ? AND a.isRetard = false";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idPersonne);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Absence absence = mapResultSetToAbsence(resultSet);  // Vous devrez implémenter cette méthode
+                absences.add(absence);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return absences;
+    }
+    public List<Absence> getRetardsParPersonne(int idPersonne) {
+        List<Absence> absences = new ArrayList<>();
+        String query = "SELECT a.* FROM Absence a JOIN PersonneAbsence pa ON a.id_m = pa.id_absence WHERE pa.id_personne = ? AND a.isRetard = true";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idPersonne);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Absence absence = mapResultSetToAbsence(resultSet);
+                absences.add(absence);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return absences;
     }
 
 }
