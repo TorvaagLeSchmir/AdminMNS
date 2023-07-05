@@ -20,15 +20,12 @@ public class FileStorageService {
             String originalFileName = file.getOriginalFilename();
             String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
 
-            // Copier le fichier vers le dossier de stockage
             Path targetLocation = this.fileStorageLocationJustificatif.resolve(uniqueFileName);
             Files.copy(file.getInputStream(), targetLocation);
 
-            // Retourner le lien vers le fichier
             return targetLocation.toUri().toString();
 
         } catch (Exception ex) {
-            // Gérer les exceptions
             throw new RuntimeException("Failed to store file", ex);
         }
     }
@@ -41,15 +38,12 @@ public class FileStorageService {
             String originalFileName = file.getOriginalFilename();
             String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFileName;
 
-            // Copier le fichier vers le dossier de stockage
             Path targetLocation = this.getFileStorageLocationDocuments.resolve(uniqueFileName);
             Files.copy(file.getInputStream(), targetLocation);
 
-            // Retourner le lien vers le fichier
             return targetLocation.toUri().toString();
 
         } catch (Exception ex) {
-            // Gérer les exceptions
             throw new RuntimeException("Failed to store file", ex);
         }
     }
