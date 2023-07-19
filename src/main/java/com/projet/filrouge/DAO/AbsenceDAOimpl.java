@@ -215,7 +215,7 @@ public class AbsenceDAOimpl implements AbsenceDAO {
             statement.setInt(1, idPersonne);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                Absence absence = mapResultSetToAbsence(resultSet);  // Vous devrez implémenter cette méthode
+                Absence absence = mapResultSetToAbsence(resultSet);
                 absences.add(absence);
             }
         } catch (SQLException e) {
